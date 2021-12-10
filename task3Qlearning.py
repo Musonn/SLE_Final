@@ -13,14 +13,12 @@ learning_rate = 0.1
 score = []
 
 # initialization
-start_state = (3,2,2,2)
 all_actions = env.action_space.n    # int 2
-q_value_table = np.zeros((6,3,3,3) + (all_actions,)) # the magic number refers to the page 5 of instruction
+q_value_table = np.zeros((1,1,6,12) + (all_actions,)) # the magic number refers to the page 5 of instruction
 
 # user-defined parameters
 min_explore_rate = 0.1; min_learning_rate = 0.1; max_episodes = 2000
-max_time_steps = 250; streak_to_end = 120; solved_time = 199; discount = 0.99
-no_streaks = 0
+discount = 0.99
 
 
 def policy(obs):    # obs is a list of theta, x, theta', x'
@@ -74,8 +72,7 @@ def select_learning_rate(x):
 def select_explore_rate(x):
     return max(min_explore_rate, min(1.0, 1.0 - math.log10((x+1)/25)))
 
-def select_action(state_value, episode_no):
-    explore_rate = select_explore_rate(episode_no)
+def select_action(state_value, explore_rate): 
     if random.random() < explore_rate:
         action = env.action_space.sample() # explore
     else: # exploit
@@ -89,21 +86,21 @@ for episode_no in range(max_episodes):
     # initialize the environment
     obs = env.reset()
     prev_state = get_state(obs)
+    learning_rate = select_learning_rate(episode_no)
+    explore_rate = select_explore_rate(episode_no)
     done = False
     time_step = 0
     reward=[]
     while not done:
         #env.render()
         # select action using epsilon-greedy policy
-        action = select_action(prev_state, episode_no)
+        action = select_action(prev_state, explore_rate)
         # record new observations
         obs, reward_gain, done, info = env.step(action)
-        if done: reward_gain = 0
         #update q_value_table
         best_q = max(q_value_table[get_state(obs)])
-        sample = reward_gain + discount * best_q
-        learning_rate = select_learning_rate(episode_no)
-        q_value_table[prev_state][action] = (1-learning_rate) * q_value_table[prev_state][action] + learning_rate * sample
+        sample = reward_gain + 1 * best_q
+        q_value_table[prev_state][action] += learning_rate * (sample - q_value_table[prev_state][action])
         # update the states for next iteration
         prev_state = get_state(obs)
 
