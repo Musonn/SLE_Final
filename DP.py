@@ -38,7 +38,7 @@ while policy_stable == False:
     delt = 1
     while delt >= theta:
         delt = 0
-        print(vk)
+        
         for i in range(4):
             for j in range(4):
                 if not(i == 0 and j == 0) and not(i == 3 and j == 3):
@@ -152,3 +152,8 @@ while policy_stable == False:
     pi_left = pi_left2.copy()
     pi_up = pi_up2.copy()
     pi_down = pi_down2.copy()
+
+print("Final Value Function:")    
+print(vk)
+print("Optimal Policy (right, left, up, down): ")
+print(pi_right, '\n', pi_left, '\n', pi_up, '\n', pi_down)
