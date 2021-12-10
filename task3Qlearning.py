@@ -14,56 +14,55 @@ score = []
 
 # initialization
 all_actions = env.action_space.n    # int 2
-q_value_table = np.zeros((1,1,6,12) + (all_actions,)) # the magic number refers to the page 5 of instruction
+q_value_table = np.zeros((3,3,6,3) + (all_actions,)) # the magic number refers to the page 5 of instruction
 
 # user-defined parameters
-min_explore_rate = 0.1; min_learning_rate = 0.1; max_episodes = 2000
+min_explore_rate = 0.01; min_learning_rate = 0.1; max_episodes = 1000
 discount = 0.99
 
 
-def policy(obs):    # obs is a list of theta, x, theta', x'
+def policy(obs):    # obs is a list of x, x', theta, theta'
     angle = obs[2]
     return 0 if angle<0 else 1
 
 def get_state(observation):
-    b, d, a, c = observation
-    a=a/np.pi*180
+    a,b,c,d = observation   # x, x', theta, theta'
     c=c/np.pi*180
-    if a < -6:
+    d=d/np.pi*180
+    if a < -1.6:
         a = 1
-    elif a < -1:
-        a =2
-    elif a < 0:
-        a =3
-    elif a < 1:
-        a = 4
-    elif a < 6:
-        a=5
+    elif a < 1.6:
+        a = 2
     else:
-        a=6
-    
-    if b < -0.8:
+        a = 3
+
+    if b < -0.5:
         b=1
-    elif b < 0.8:
+    elif b < 0.5:
         b=2
     else:
         b = 3
-
-    if c < -50:
-        c=1
-    elif c < 50:
-        c=2
-    else:
-        c = 3
     
-    if d < -0.5:
+    if c < -14:
+        c=1
+    elif c < -9:
+        c=2
+    elif c < 0:
+        c=3
+    elif c < 9:
+        c=4
+    elif c < 14:
+        c=5
+    else:
+        c=6
+    
+    if d < -50:
         d=1
-    elif d < 0.5:
+    elif d < 50:
         d=2
     else:
-        d = 3
-
-    return  tuple([a-1,b-1,c-1,d-1])
+        d=3
+    return tuple([a-1, b-1, c-1, d-1])
 
 def select_learning_rate(x):
     return max(min_learning_rate, min(1.0, 1.0 - math.log10((x+1)/25)))
@@ -97,9 +96,10 @@ for episode_no in range(max_episodes):
         action = select_action(prev_state, explore_rate)
         # record new observations
         obs, reward_gain, done, info = env.step(action)
+        if done: break
         #update q_value_table
         best_q = max(q_value_table[get_state(obs)])
-        sample = reward_gain + 1 * best_q
+        sample = reward_gain + discount * best_q
         q_value_table[prev_state][action] += learning_rate * (sample - q_value_table[prev_state][action])
         # update the states for next iteration
         prev_state = get_state(obs)
