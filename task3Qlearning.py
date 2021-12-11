@@ -1,3 +1,4 @@
+from typing import Deque
 import gym
 import numpy as np
 import random
@@ -8,22 +9,14 @@ env = gym.make('CartPole-v0')
 env.seed(0)
 np.random.seed(0)
 
-# define hyperparameters
-learning_rate = 0.1
-score = []
-
 # initialization
 all_actions = env.action_space.n    # int 2
-q_value_table = np.zeros((3,3,6,3) + (all_actions,)) # the magic number refers to the page 5 of instruction
+q_value_table = np.zeros((3,3,6,6) + (all_actions,)) # the magic number refers to the page 5 of instruction
 
 # user-defined parameters
-min_explore_rate = 0.01; min_learning_rate = 0.1; max_episodes = 1000
+min_explore_rate = 0.001; min_learning_rate = 0.1; max_episodes = 1000
 discount = 0.99
-
-
-def policy(obs):    # obs is a list of x, x', theta, theta'
-    angle = obs[2]
-    return 0 if angle<0 else 1
+score = Deque(maxlen = 1000)
 
 def get_state(observation):
     a,b,c,d = observation   # x, x', theta, theta'
@@ -43,39 +36,45 @@ def get_state(observation):
     else:
         b = 3
     
-    if c < -14:
+    if c < -16:
         c=1
-    elif c < -9:
+    elif c < -8:
         c=2
     elif c < 0:
         c=3
-    elif c < 9:
+    elif c < 8:
         c=4
-    elif c < 14:
+    elif c < 16:
         c=5
     else:
         c=6
     
     if d < -50:
         d=1
-    elif d < 50:
+    elif d < -30:
         d=2
-    else:
+    elif d < -10:
         d=3
+    elif d < 10:
+        d=4
+    elif d < 30:
+        d=5
+    else:
+        d=6
     return tuple([a-1, b-1, c-1, d-1])
 
 def select_learning_rate(x):
-    return max(min_learning_rate, min(1.0, 1.0 - math.log10((x+1)/25)))
+    return max(min_learning_rate, min(1.0, 1.0 - math.log10((x+1)/70)))
 
 # change the exploration rate over time.
 def select_explore_rate(x):
-    return max(min_explore_rate, min(1.0, 1.0 - math.log10((x+1)/25)))
+    return max(min_explore_rate, min(1.0, 1.0 - math.log10((x+1)/70)))
 
 def select_action(state_value, explore_rate): 
     if random.random() < explore_rate:
         action = env.action_space.sample() # explore
-    else: # exploit
-        action = np.argmax(q_value_table[state_value])
+    else: 
+        action = np.argmax(q_value_table[state_value])# exploit
     return action
 
 # train the system
@@ -88,8 +87,7 @@ for episode_no in range(max_episodes):
     learning_rate = select_learning_rate(episode_no)
     explore_rate = select_explore_rate(episode_no)
     done = False
-    time_step = 0
-    reward=[]
+    time_step = 0   # use time_step to represent reward
     while not done:
         #env.render()
         # select action using epsilon-greedy policy
@@ -104,7 +102,6 @@ for episode_no in range(max_episodes):
         # update the states for next iteration
         prev_state = get_state(obs)
 
-        reward.append(reward_gain)
         time_step += 1
         # while loop ends here
     score.append(time_step)
