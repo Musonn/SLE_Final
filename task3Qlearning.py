@@ -12,6 +12,8 @@ np.random.seed(0)
 # initialization
 all_actions = env.action_space.n    # int 2
 q_value_table = np.zeros((3,3,6,6) + (all_actions,)) # the magic number refers to the page 5 of instruction
+x_history = list(); angle_history = list()
+
 
 # user-defined parameters
 min_explore_rate = 0.001; min_learning_rate = 0.1; max_episodes = 1000
@@ -104,24 +106,24 @@ for episode_no in range(max_episodes):
 
         time_step += 1
         # while loop ends here
+        if episode_no == 999:
+            x_history.append(obs[0])
+            angle_history.append(obs[2])
     score.append(time_step)
 env.close()
 
+# output the results
+# f = open('result_Q.txt','a')    # remember to change the working directory in your terminal / console
+# for number in score:        # the default is C:\Users\whatever_user_name_it_is
+#     f.write(str(number))
+#     f.write(' ')
+# f.write('\n')
+# f.close()
 
-#  Performance plots
-import matplotlib.pyplot as plt
-def plot_performance(scores):
-    # Plot the policy performance
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    x = np.arange(1, len(scores) + 1)
-    y = scores
-    plt.scatter(x, y, marker='x', c=y)
-    fit = np.polyfit(x, y, deg=4)
-    p = np.poly1d(fit)
-    plt.plot(x,p(x),"r--")
-    plt.ylabel('Score')
-    plt.xlabel('Episode #')
-    plt.show()
-
-plot_performance(score)
+# with open('position and angle.txt', 'w') as g:
+#     for i in x_history:
+#         g.write(str(i)+' ')
+#     g.write('\n')
+#     for i in angle_history:
+#         g.write(str(i)+' ')
+#     g.write('\n')
