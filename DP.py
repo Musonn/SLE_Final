@@ -12,9 +12,9 @@ vk = vk*-1
 vk[0,0] = 0
 vk[-1,-1] = 0
 
-
-theta = 0.001
-gamma = 0.9
+# define hyperparameters
+theta = 0.0001
+gamma = 1
 v = 0
 
 pi_right2 = np.zeros((4,4))
@@ -156,4 +156,21 @@ while policy_stable == False:
 print("Final Value Function:")    
 print(vk)
 print("Optimal Policy (right, left, up, down): ")
-print(pi_right, '\n', pi_left, '\n', pi_up, '\n', pi_down)
+#print(pi_right, '\n', pi_left, '\n', pi_up, '\n', pi_down)
+
+optimal_policy=np.array(range(16), dtype=str).reshape(4,4)    
+optimal_policy[0,0] = 'O'
+optimal_policy[3,3] = 'O'
+for i in range(4):
+        for j in range(4):
+            if not(i == 0 and j == 0) and not(i == 3 and j == 3):
+                optimal_policy[i,j] = np.argmax([pi_right[i,j], pi_left[i,j], pi_up[i,j], pi_down[i,j]])
+                if optimal_policy[i,j] == '0' :
+                    optimal_policy[i,j] = '→'
+                elif optimal_policy[i,j] == '1':
+                    optimal_policy[i,j] = '←'
+                elif optimal_policy[i,j] == '2':
+                    optimal_policy[i,j] = '↑'
+                elif optimal_policy[i,j] == '3':
+                    optimal_policy[i,j] = '↓'
+print(optimal_policy)
