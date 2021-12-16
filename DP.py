@@ -13,7 +13,7 @@ vk[0,0] = 0
 vk[-1,-1] = 0
 
 # define hyperparameters
-theta = 0.0001
+theta = 0.001
 gamma = 1
 v = 0
 
@@ -42,8 +42,7 @@ while policy_stable == False:
         for i in range(4):
             for j in range(4):
                 if not(i == 0 and j == 0) and not(i == 3 and j == 3):
-                    
-                    
+
                     v = vk[i,j]
                     
                     p = np.zeros((4,4))
