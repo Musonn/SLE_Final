@@ -45,15 +45,24 @@ for a in range(1,4,1):
     for b in range(3):
         for c in range(1,5,1):
             for d in range(6):
-                old_action = policy[a,b,c,d]
                 p_r = get_p((a,b,c,d), 1)
                 p_l = get_p((a,b,c,d), 0)
                 pi_right = np.zeros(shape)
                 pi_left = pi_right.copy()
-                policy[a,b,c,d] = np.argmax([pi_right[a,b,c,d], pi_left[a, b,c,d]])
 
+                # iterate all next_states
+                for sa in range(5):
+                    for sb in range(3):
+                        for sc in range(6):
+                            for sd in range(6):
+                                if p_r[sa,sb,sc,sd, 1] != 0:
+                                    pi_right[a,b,c,d] += p_r[sa,sb,sc,sd, 1]*(get_reward((sa,sb,sc,sd)) + discount*V_value_table[sa,sb,sc,sd]) # 1 is right
+                                #else: pi_right[a,b,c,d] =0
+                                if p_l[sa,sb,sc,sd, 0] != 0:
+                                    pi_left[a,b,c,d] += p_l[sa,sb,sc,sd, 0]*(get_reward((sa,sb,sc,sd)) + discount*V_value_table[sa,sb,sc,sd])  # 0 is left
+                                #else: pi_left[a,b,c,d] = 0
+                policy[a,b,c,d] = np.argmax([pi_right[a,b,c,d], pi_left[a, b,c,d]])
 
 a=1
 print('policy and value function:')
 print(policy, V_value_table)
-print('Complete training at eposoid', eposoid)

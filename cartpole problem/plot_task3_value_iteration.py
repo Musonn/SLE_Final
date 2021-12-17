@@ -27,66 +27,66 @@ policy = np.array([[[[0, 0, 0, 0, 0, 0],
 
 
        [[[0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0]],
-
-        [[0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
+         [1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 0, 1],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0]],
 
         [[0, 0, 0, 0, 0, 0],
+         [1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 0, 0, 0],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0]],
+
+        [[0, 0, 0, 0, 0, 0],
+         [1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0]]],
 
 
        [[[0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0]],
-
-        [[0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
+         [1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0]],
 
         [[0, 0, 0, 0, 0, 0],
+         [1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0]],
+
+        [[0, 0, 0, 0, 0, 0],
+         [1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0]]],
 
 
        [[[0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0]],
-
-        [[0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
+         [1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0]],
 
         [[0, 0, 0, 0, 0, 0],
+         [1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1],
+         [1, 0, 0, 0, 0, 1],
          [0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0]],
+
+        [[0, 0, 0, 0, 0, 0],
+         [1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0]]],
@@ -317,108 +317,66 @@ value_function = np.array([[[[ 0.        ,  0.        ,  0.        ,  0.        
 Plots of value function. Since there are 4 state variables, generate plots of value function with
 respect to theta and x for selected theta' and x' . At least three plots are needed.
 '''
-X = [-3, -1.6, 0, 1.6, 3]  # POSITION
-Y = [-18, -9, -3, 3, 9, 18] # angle
+X1 = [-3, -1.6, 0, 1.6, 3] * 6 # POSITION
+X=[]
+for i in range(5):
+  for j in range(6):
+    X.append(X1[i])
+Y = [-18, -9, -3, 3, 9, 18] * 5 # angle
 Z = value_function[:, 2, :, 3]
-Z1 = Z[:,1]
-Z2 = Z[1,:]
+Z=Z.reshape((1,-1))[0]
 fig = plt.figure()
 plt.title("Given theta' btw -10 and 10 degree/s and x' greater than 5")
-ax = fig.add_subplot(211)
-ax.scatter(X, Z1, c='red', label='x')
+ax = plt.axes(projection='3d')
+ax.scatter3D(X, Y, Z, c='red', label='value')
 ax.set_xlabel('x')
-ax.set_ylabel('value function')
-ax = fig.add_subplot(212)
-ax.scatter(Y, Z2, c='blue', label='theta')
-ax.set_xlabel('theta')
-ax.set_ylabel('value function')
-plt.legend()
+ax.set_ylabel('theta')
+ax.set_zlabel('value')
 
-X = [-3, -1.6, 0, 1.6, 3]  # POSITION
-Y = [-18, -9, -3, 3, 9, 18] # angle
-Z = value_function[:, 1, :, 2]
-Z1 = Z[:,1]
-Z2 = Z[1,:]
 fig = plt.figure()
-ax = fig.add_subplot(211)
 plt.title("Given theta' btw -30 and -10 degree/s and x' btw -0.5 and 5")
-ax.scatter(X, Z1, c='red', label='x')
+ax = plt.axes(projection='3d')
+ax.scatter3D(X, Y, Z, c='red', label='x')
 ax.set_xlabel('x')
-ax.set_ylabel('value function')
-ax = fig.add_subplot(212)
-ax.scatter(Y, Z2, c='blue', label='theta')
-ax.set_xlabel('theta')
-ax.set_ylabel('value function')
-plt.legend()
+ax.set_ylabel('theta')
+ax.set_zlabel('value')
 
-X = [-3, -1.6, 0, 1.6, 3]  # POSITION
-Y = [-18, -9, -3, 3, 9, 18] # angle
-Z = value_function[:, 2, :, 1]
-Z1 = Z[:,1]
-Z2 = Z[1,:]
+
 fig = plt.figure()
 plt.title("Given theta' btw -50 and -30 degree/s and x' greater than 5")
-ax = fig.add_subplot(211)
-ax.scatter(X, Z1, c='red', label='x')
+ax = plt.axes(projection='3d')
+ax.scatter3D(X, Y, Z, c='red', label='x')
 ax.set_xlabel('x')
-ax.set_ylabel('value function')
-ax = fig.add_subplot(212)
-ax.scatter(Y, Z2, c='blue', label='theta')
-ax.set_xlabel('theta')
-ax.set_ylabel('value function')
-plt.legend()
+ax.set_ylabel('theta')
+ax.set_zlabel('value')
 
 '''
 Plots of optimal policy, in the same way as in the plots of value function.
 '''
-X = [-3, -1.6, 0, 1.6, 3]  # POSITION
-Y = [-18, -9, -3, 3, 9, 18] # angle
 Z = policy[:, 2, :, 3]
-Z1 = Z[:,1]
-Z2 = Z[1,:]
+Z=Z.reshape((1,-1))[0]
 fig = plt.figure()
 plt.title("Given theta' btw -10 and 10 degree/s and x' greater than 5")
-ax = fig.add_subplot(211)
-ax.scatter(X, Z1, c='red', label='x')
+ax = plt.axes(projection='3d')
+ax.scatter3D(X, Y, Z, c='red', label='x')
 ax.set_xlabel('x')
-ax.set_ylabel('value function')
-ax = fig.add_subplot(212)
-ax.scatter(Y, Z2, c='blue', label='theta')
-ax.set_xlabel('theta')
-ax.set_ylabel('policy')
-plt.legend()
+ax.set_ylabel('theta')
+ax.set_zlabel('policy')
 
-X = [-3, -1.6, 0, 1.6, 3]  # POSITION
-Y = [-18, -9, -3, 3, 9, 18] # angle
-Z = policy[:, 1, :, 2]
-Z1 = Z[:,1]
-Z2 = Z[1,:]
 fig = plt.figure()
 ax = fig.add_subplot(211)
 plt.title("Given theta' btw -30 and -10 degree/s and x' btw -0.5 and 5")
-ax.scatter(X, Z1, c='red', label='x')
+ax = plt.axes(projection='3d')
+ax.scatter3D(X, Y, Z, c='red', label='x')
 ax.set_xlabel('x')
-ax.set_ylabel('value function')
-ax = fig.add_subplot(212)
-ax.scatter(Y, Z2, c='blue', label='theta')
-ax.set_xlabel('theta')
-ax.set_ylabel('policy')
-plt.legend()
+ax.set_ylabel('theta')
+ax.set_zlabel('policy')
 
-X = [-3, -1.6, 0, 1.6, 3]  # POSITION
-Y = [-18, -9, -3, 3, 9, 18] # angle
-Z = policy[:, 2, :, 1]
-Z1 = Z[:,1]
-Z2 = Z[1,:]
-fig = plt.figure()
+
 plt.title("Given theta' btw -50 and -30 degree/s and x' greater than 5")
-ax = fig.add_subplot(211)
-ax.scatter(X, Z1, c='red', label='x')
+ax = plt.axes(projection='3d')
+ax.scatter3D(X, Y, Z, c='red', label='x')
 ax.set_xlabel('x')
-ax.set_ylabel('value function')
-ax = fig.add_subplot(212)
-ax.scatter(Y, Z2, c='blue', label='theta')
-ax.set_xlabel('theta')
-ax.set_ylabel('policy')
-plt.legend()
+ax.set_ylabel('theta')
+ax.set_zlabel('policy')
 plt.show()
