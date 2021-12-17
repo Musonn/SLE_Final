@@ -10,7 +10,7 @@ from sklearn.linear_model import RidgeCV
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVR
-
+import matplotlib.pyplot as plt
 
 #%% Data Processing
 
@@ -23,6 +23,7 @@ with open('pergame.txt') as csv_file:
         data.append(row)
 
 data = np.array(data)
+TeamOrder2020 = data[1:,1]
 
 statspergame = data[1:,3:].astype(float)
 X_train = statspergame[:,:-1]
@@ -37,6 +38,8 @@ with open('2021pergame.txt') as csv_file:
         data.append(row)
 
 data = np.array(data)
+
+TeamOrder2021 = data[1:,1]
 
 pergame2021 = data[1:,2:].astype(float)
 numgames = pergame2021[:,0]
@@ -56,6 +59,7 @@ scaledtest = scaler.transform(X_test)
 #%%Ridge Regression
 
 ridge = RidgeCV(alphas=[1e-2,1e-1, 1,10,20]).fit(scaledtrain, y_train)
+guessridge2020 = ridge.predict(scaledtrain)
 guessridge = ridge.predict(scaledtest)
 
 print('Ridge Regression:')
@@ -93,9 +97,33 @@ param_grid = {'C': [0.1, 1, 10, 100, 1000],
  
 svr_grid = GridSearchCV(SVR(), param_grid, scoring = 'r2', refit = True, verbose = 0)
  
+print(svr_grid.estimator.kernel)
+
 # fitting the model for grid search
 svr_grid.fit(scaledtrain, y_train)
 
 svr_grid_predict = svr_grid.predict(scaledtest)
 print('Support Vector Regression: ')
 print('R^2 = ', round(svr_grid.score(scaledtest, y_test),3))
+
+#%%Plotting with best regression (ridge)
+
+fig = plt.figure()
+ax = fig.add_axes([0,0,1,1])
+
+xloc = np.arange(32)
+ax.set_title('2021 Regression Performance (Test)')
+ax.bar(xloc, guessridge, color = 'b', width = 0.25)
+ax.bar(xloc + 0.25, y_test, color = 'g', width = 0.25)
+plt.xticks(xloc, TeamOrder2021, rotation='vertical')
+ax.set_ylabel('2021 Win Rate')
+ax.legend(labels=['Ridge Predicted', 'Actual'])
+
+fig = plt.figure()
+ax = fig.add_axes([0,0,1,1])
+ax.set_title('2020 Regression Performance (Training)')
+ax.bar(xloc, guessridge2020, color = 'b', width = 0.25)
+ax.bar(xloc + 0.25, y_train, color = 'g', width = 0.25)
+plt.xticks(xloc, TeamOrder2020, rotation='vertical')
+ax.set_ylabel('2020 Win Rate')
+ax.legend(labels=['Ridge Predicted', 'Actual'])
