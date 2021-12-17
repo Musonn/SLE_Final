@@ -82,10 +82,11 @@ class DPEnv():
 
         return np.array(self.state, dtype=np.float32)
 
-# given a state and a action, find out the prob of next state
-# build a huge table
-# vnm. start from simple
 def get_p(state, action):
+    '''
+    This function compute a table of transition probability based on current state
+    and the action. Huge time complexity.
+    '''
     iterations = int(1e3)
     model = DPEnv()
     p_table = np.zeros((5,3,6,6,2))
@@ -99,6 +100,9 @@ def get_p(state, action):
     return p_table
 
 def get_parameters(state):
+    '''
+    Ramdomly choose an observation from a state
+    '''
     a, b, c, d = state
     
     if a == 0:
@@ -151,6 +155,9 @@ def get_parameters(state):
         uniform(angle_range[0]*pi/180,angle_range[1]*pi/180), uniform(angle_v_range[0]*pi/180, angle_v_range[1]*pi/180)
 
 def get_state(observation):
+    '''
+    Match obervation to the state
+    '''
     a,b,c,d = observation   # x, x', theta, theta'
     c=c/np.pi*180
     d=d/np.pi*180

@@ -1,17 +1,5 @@
-import gym
 import numpy as np
 from get_prob import get_state, get_p, get_reward
-env = gym.make('CartPole-v0')
-
-# define hyperparameters
-epoch = 500
-
-def policy(obs):
-    angle = obs[2]
-    return 0 if angle<0 else 1
-
-
-
 
 # hyper-parameters
 threshold = 0.05 # indecisive
@@ -21,8 +9,8 @@ discount = 0.9
 
 # init
 V_value_table = np.zeros(shape)
-p = np.full(shape+(all_actions,), 0.5)
-#p = np.random.normal(0, 1, shape+(all_actions,))
+# p = np.full(shape+(all_actions,), 0.5)
+# p = np.random.normal(0, 1, shape+(all_actions,))
 policy = np.full(shape, 0)  # a table full of 0 or 1
 pi_right = np.zeros(shape)
 pi_left = pi_right.copy()
@@ -30,19 +18,20 @@ pi_left = pi_right.copy()
 # policy iteration
 global Evaluation
 def Evaluation():
-    delta =1e6
+    delta = threshold+1 # make sure delta > threshold at the beginning
     while delta > threshold:
         delta = 0
-        obs = env.reset()
+        # iterate all states
         for a in range(1,4,1):
             for b in range(3):
                 for c in range(1,5,1):
                     for d in range(6):
                         v = V_value_table[a,b,c,d]
-                        
                         summ = 0
                         best_move = policy[a,b,c,d]
                         p = get_p((a,b,c,d), best_move)
+
+                        # iterate all next_states
                         for sa in range(5):
                             for sb in range(3):
                                 for sc in range(6):
@@ -61,8 +50,9 @@ eposoid = 0
 while policy_stable is False:
     difference_count = 0
     eposoid+=1
-    print(eposoid)
+    print('Current eposoid:',eposoid)
     policy_stable = True
+    # iterate all states
     for a in range(1,4,1):
         for b in range(3):
             for c in range(1,5,1):
@@ -72,6 +62,8 @@ while policy_stable is False:
                     p_l = get_p((a,b,c,d), 0)
                     pi_right = np.zeros(shape)
                     pi_left = pi_right.copy()
+
+                    # iterate all next_states
                     for sa in range(5):
                         for sb in range(3):
                             for sc in range(6):
@@ -84,12 +76,13 @@ while policy_stable is False:
                                     #else: pi_left[a,b,c,d] = 0
                     policy[a,b,c,d] = np.argmax([pi_right[a,b,c,d], pi_left[a, b,c,d]])
                     if old_action != policy[a,b,c,d]: policy_stable = False; difference_count+=1
-    print(difference_count)
+    print('policy changes count:', difference_count)
     if policy_stable is True:
         break   # the optimal policy is obtained. Break and return.
     else:
         Evaluation()
 
 a=1
+print('policy and value function:')
 print(policy, V_value_table)
-print(eposoid)
+print('Complete training at eposoid', eposoid)

@@ -17,7 +17,7 @@ x_history = list(); angle_history = list()
 
 # user-defined parameters
 min_explore_rate = 0.001; min_learning_rate = 0.1; max_episodes = 1000
-discount = 0.99
+discount = 0.99 
 score = Deque(maxlen = 1000)
 
 def get_state(observation):
@@ -91,7 +91,7 @@ for episode_no in range(max_episodes):
     done = False
     time_step = 0   # use time_step to represent reward
     while not done:
-        #env.render()
+        if episode_no == 999: env.render()
         # select action using epsilon-greedy policy
         action = select_action(prev_state, explore_rate)
         # record new observations
@@ -112,8 +112,8 @@ for episode_no in range(max_episodes):
     score.append(time_step)
 env.close()
 
-# output the results
-# f = open('result_Q.txt','a')    # remember to change the working directory in your terminal / console
+# # output the results
+# f = open('result_Q_0.96.txt','a')    # remember to change the working directory in your terminal / console
 # for number in score:        # the default is C:\Users\whatever_user_name_it_is
 #     f.write(str(number))
 #     f.write(' ')
@@ -127,3 +127,21 @@ env.close()
 #     for i in angle_history:
 #         g.write(str(i)+' ')
 #     g.write('\n')
+
+#  Performance plots
+import matplotlib.pyplot as plt
+def plot_performance(scores):
+    # Plot the policy performance
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    x = np.arange(1, len(scores) + 1)
+    y = scores
+    plt.scatter(x, y, marker='x', c=y)
+    fit = np.polyfit(x, y, deg=4)
+    p = np.poly1d(fit)
+    plt.plot(x,p(x),"r--")
+    plt.ylabel('Score')
+    plt.xlabel('Episode #')
+    plt.show()
+
+plot_performance(score)
