@@ -207,6 +207,9 @@ def get_state(observation):
     return tuple([a-1, b-1, c-1, d-1])
 
 def get_reward(state):
+    '''
+    If the state is not terminal state, get reward 0. Otherwise -1.
+    '''
     a,b,c,d = state
     if 0<a and a<4:
         if 0<c and c<5:

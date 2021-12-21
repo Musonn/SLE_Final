@@ -26,17 +26,23 @@ while delta > threshold:
                 for d in range(6):
                     v = V_value_table[a,b,c,d]
                     summ = 0
-                    best_move = policy[a,b,c,d]
-                    p = get_p((a,b,c,d), best_move)
+                    p_r = get_p((a,b,c,d), 1)
+                    p_l = get_p((a,b,c,d), 0)
+                    sum_right = np.zeros(shape)
+                    sum_left = pi_right.copy()
 
                     # iterate all next_states
                     for sa in range(5):
                         for sb in range(3):
                             for sc in range(6):
                                 for sd in range(6):
-                                    if p[sa,sb,sc,sd, best_move] != 0:
-                                        summ += p[sa,sb,sc,sd, best_move]*(get_reward((sa,sb,sc,sd)) + discount*V_value_table[sa,sb,sc,sd])
-                    V_value_table[a,b,c,d] = summ
+                                    if p_r[sa,sb,sc,sd, 1] != 0:
+                                        sum_right[a,b,c,d] += p_r[sa,sb,sc,sd, 1]*(get_reward((sa,sb,sc,sd)) + discount*V_value_table[sa,sb,sc,sd]) # 1 is right
+                                    #else: pi_right[a,b,c,d] =0
+                                    if p_l[sa,sb,sc,sd, 0] != 0:
+                                        sum_left[a,b,c,d] += p_l[sa,sb,sc,sd, 0]*(get_reward((sa,sb,sc,sd)) + discount*V_value_table[sa,sb,sc,sd])  # 0 is left
+                                    #else: pi_left[a,b,c,d] = 0
+                    V_value_table[a,b,c,d] = np.max(sum_right[a,b,c,d], sum_left[a, b,c,d])
                     
                     delta = max(delta, abs(v - V_value_table[a,b,c,d]))
 

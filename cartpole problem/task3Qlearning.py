@@ -91,7 +91,7 @@ for episode_no in range(max_episodes):
     done = False
     time_step = 0   # use time_step to represent reward
     while not done:
-        if episode_no == 999: env.render()
+        if episode_no % 100 == 0: env.render()
         # select action using epsilon-greedy policy
         action = select_action(prev_state, explore_rate)
         # record new observations
